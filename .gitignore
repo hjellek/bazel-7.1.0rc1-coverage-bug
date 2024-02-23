@@ -1,0 +1,6 @@
+.ijwb
+.idea
+bazel-bazel-7.1.0rc1-bug
+bazel-bin
+bazel-out
+bazel-testlogs

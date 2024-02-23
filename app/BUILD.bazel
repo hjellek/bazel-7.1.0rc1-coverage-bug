@@ -1,0 +1,56 @@
+load("@contrib_rules_jvm//java:defs.bzl", "java_test_suite", "junit5_deps")
+load("@rules_spring//springboot:springboot.bzl", "springboot")
+load("@rules_kotlin//kotlin:jvm.bzl", "kt_jvm_library", "kt_jvm_test")
+
+kt_jvm_library(
+    name = "app_libs",
+    srcs = ["src/main/com/example/Main.java"],
+    deps = [
+        "@maven//:org_springframework_boot_spring_boot_starter_web",
+    ],
+)
+
+springboot(
+    name = "app",
+    boot_app_class = "com.example.Main",
+    boot_launcher_class = "org.springframework.boot.loader.launch.JarLauncher",
+    java_library = ":app_libs",
+)
+
+java_test(
+    name = "java_test",
+    size = "small",
+    srcs = ["src/test/com/example/ContextTest.java"],
+    jvm_flags = ["-Djava.security.manager=allow"],
+    main_class = "com.github.bazel_contrib.contrib_rules_jvm.junit5.JUnit5Runner",
+    test_class = "com.example.ContextTest",
+    runtime_deps = ["@contrib_rules_jvm//java/src/com/github/bazel_contrib/contrib_rules_jvm/junit5"],
+    deps = junit5_deps() + [
+        ":app_libs",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_springframework_boot_spring_boot_starter_test",
+        "@maven//:org_springframework_boot_spring_boot_test",
+        "@maven//:org_springframework_boot_spring_boot_test_autoconfigure",
+        "@maven//:org_springframework_spring_test",
+    ],
+)
+
+kt_jvm_test(
+    name = "kotlin_test",
+    size = "small",
+    srcs = ["src/test/com/example/ContextKotlinTest.kt"],
+    jvm_flags = ["-Djava.security.manager=allow"],
+    main_class = "com.github.bazel_contrib.contrib_rules_jvm.junit5.JUnit5Runner",
+    test_class = "com.example.ContextKotlinTest",
+    runtime_deps = [
+        "@contrib_rules_jvm//java/src/com/github/bazel_contrib/contrib_rules_jvm/junit5",
+    ],
+    deps = junit5_deps() + [
+        ":app_libs",
+        "@maven//:org_junit_jupiter_junit_jupiter_api",
+        "@maven//:org_springframework_boot_spring_boot_starter_test",
+        "@maven//:org_springframework_boot_spring_boot_test",
+        "@maven//:org_springframework_boot_spring_boot_test_autoconfigure",
+        "@maven//:org_springframework_spring_test",
+    ],
+)
